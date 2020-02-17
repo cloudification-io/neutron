@@ -14,6 +14,8 @@ from neutron_lib.db import constants as db_const
 from neutron_lib.db import model_base
 import sqlalchemy as sa
 
+from neutron.db import rbac_db_models
+
 
 class AddressScope(model_base.BASEV2, model_base.HasId, model_base.HasProject):
     """Represents a neutron address scope."""
@@ -21,5 +23,9 @@ class AddressScope(model_base.BASEV2, model_base.HasId, model_base.HasProject):
     __tablename__ = "address_scopes"
 
     name = sa.Column(sa.String(db_const.NAME_FIELD_SIZE), nullable=False)
-    shared = sa.Column(sa.Boolean, nullable=False)
     ip_version = sa.Column(sa.Integer(), nullable=False)
+
+    rbac_entries = sa.orm.relationship(rbac_db_models.AddressScopeRBAC,
+                                       backref='address_scopes',
+                                       lazy='subquery',
+                                       cascade='all, delete, delete-orphan')
