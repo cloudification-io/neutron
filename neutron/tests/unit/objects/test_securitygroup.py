@@ -10,6 +10,8 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+import collections
+import itertools
 import random
 
 from neutron.objects import securitygroup
@@ -18,18 +20,7 @@ from neutron.tests.unit.objects import test_rbac
 from neutron.tests.unit import testlib_api
 
 
-class _SecurityGroupRBACBase(object):
-
-    def get_random_object_fields(self, obj_cls=None):
-        fields = (super(_SecurityGroupRBACBase, self).
-                  get_random_object_fields(obj_cls))
-        rnd_actions = self._test_class.db_model.get_valid_actions()
-        idx = random.randint(0, len(rnd_actions) - 1)
-        fields['action'] = rnd_actions[idx]
-        return fields
-
-
-class SecurityGroupRBACDbObjectTestCase(_SecurityGroupRBACBase,
+class SecurityGroupRBACDbObjectTestCase(test_rbac.TestRBACObjectMixin,
                                         test_base.BaseDbObjectTestCase,
                                         testlib_api.SqlTestCase):
 
@@ -55,7 +46,7 @@ class SecurityGroupRBACDbObjectTestCase(_SecurityGroupRBACBase,
                          security_group_rbac_dict['versioned_object.data'])
 
 
-class SecurityGroupRBACIfaceObjectTestCase(_SecurityGroupRBACBase,
+class SecurityGroupRBACIfaceObjectTestCase(test_rbac.TestRBACObjectMixin,
                                            test_base.BaseObjectIfaceTestCase):
     _test_class = securitygroup.SecurityGroupRBAC
 
